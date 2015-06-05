@@ -1,0 +1,30 @@
+{
+  "name": "Inputable",
+  "version": "0.0.0",
+  "authors": [
+    "Ben (@penne12_) <ben@bensites.com>"
+  ],
+  "description": "What if the web understood you?",
+  "main": "src/Inputable.js",
+  "keywords": [
+    "input",
+    "javascript",
+    "natural",
+    "language",
+    "regex"
+  ],
+  "license": "MIT",
+  "homepage": "http://bensites.com",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "index.html",
+    "styles.css"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.4"
+  }
+}
