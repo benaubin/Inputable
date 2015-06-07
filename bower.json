@@ -22,9 +22,15 @@
     "test",
     "tests",
     "index.html",
-    "styles.css"
+    "styles.css",
+    "index.js"
   ],
   "dependencies": {
-    "bootstrap": "~3.3.4"
+    "momentjs": "~2.10.3"
+  },
+  "devDependencies": {
+    "bootstrap": "~3.3.4",
+    "angular": "~1.4.0",
+    "font-awesome": "~4.3.0"
   }
 }

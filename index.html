@@ -2,17 +2,123 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Inputable - A JS Input library</title>
+    <title>Inputable - A JS Natural Input library</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="main.js"></script>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/momentjs/min/moment.min.js"></script>
+    <script src="src/Inputable.js"></script>
+    <script src="index.js"></script>
 </head>
-<body>
-    <h1>Inputable</h1>
-    <p>What if the web understood you?</p>
-    <p>Inputable understands how you communicate, instead of you learning how to communicate. <strong>Again.</strong></p>
-    <h2>Try it.</h2>
-    <h3>Dates</h3>
-    <h3>Math</h3>
-    <h3></h3>
+<body ng-app="Inputable">
+    <div class="container" ng-controller="TryCtrl">
+        <section id="head" class="row">
+            <section id="explain" class="col-md-6">
+                <h1>Inputable</h1>
+                <p class="lead">What if the web understood you?</p>
+                <p>Inputable understands how you communicate, instead of you learning how to communicate. <strong>Again.</strong> Speaking of again. It's not just anouther data parseing library. It understands everything. And that's awesome.</p>
+            </section>
+            <section id="tryit" class="col-md-6">
+                <h2>Try it.</h2>
+                <input class="form-control" type="text" placeholder="Just type normally..." ng-model="input" ng-change="inputable(input)">
+                <div class="panel panel-default" ng-show="results" ng-repeat="result in results">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{result.name}}</h3>
+                    </div>
+                    <div class="panel-body row">
+                        <div class="col-xs-12" ng-show="result.name === 'Moment.JS Date'">
+                            <h3>Moment</h3>
+                            <p>You typed {{result.moment.format('dddd, MMMM Do, YYYY [at] h:mm:ss a')}}.</p>
+                            <p><code>.calendar()</code>: {{result.moment.calendar()}}</p>
+                            <p><code>.fromNow()</code>: {{result.moment.fromNow()}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h4>Match:</h4>
+                            <p>{{result.match.matches[0]}}</p>
+                        </div>
+                        <div class="col-md-8">
+                            <h4>Javascript Object: <i class="fa fa-caret-down" ng-click="fullObject = !fullObject"></i></h4>
+                            <code>{{result.object}}</code>
+                        </div>
+                        <div class="col-md-12" ng-show="fullObject">
+                            <h4>Full Object:</h4>
+                            <code>
+                                {{result}}
+                            </code>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+        <section id="understandit" class="row">
+            <h2>Understand it.</h2>
+            <p>Even though it's simple to talk to Inputable normally, here is everything possible:</p>
+            <div class="panel-group" id="accordion" role="tablist">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#dates-collapse">
+                            Dates
+                        </a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse in" role="tabpanel" id="dates-collapse">
+                        <div class="panel-body">
+                            <p>Type dates as you would in normally language, and inputable will pick them out.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingTwo">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#models-collapse">
+                              Models
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="models-collapse" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
+                            <p>
+                                Models aren't just text - normally they contain a title, description, and more - but when did more complexity mean less simplicity? Understand complex models from just text.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="useit" class="row">
+            <h2>Use it.</h2>
+            <div class="col-md-4 col-md-offset-1">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h2 class="panel-title">Bower:</h2>
+                    </div>
+                    <div class="panel-body">
+                        <p>Just type:</p>
+                        <code>bower install inputable --save</code>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-md-offset-2">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h2 class="panel-title">Manually:</h2>
+                    </div>
+                    <div class="panel-body">
+                        <p>Just click:</p>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-default"><i class="glyphicon glyphicon-download-alt"></i></button>
+                            <button class="btn btn-success">Minified</button>
+                            <button class="btn btn-warning">Uminified</button>
+                            <button class="btn btn-danger">Full Source</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 </body>
 </html>
