@@ -23,7 +23,7 @@
             </section>
             <section id="tryit" class="col-md-6">
                 <h2>Try it.</h2>
-                <input class="form-control" type="text" placeholder="Just type normally..." ng-model="input" ng-change="inputable(input)">
+                <input class="form-control" type="text" placeholder="Just type normally..." ng-model="input" ng-change="inputable(input)" autofocus>
                 <div class="panel panel-default" ng-show="results" ng-repeat="result in results">
                     <div class="panel-heading">
                         <h3 class="panel-title">{{result.name}}</h3>
@@ -97,8 +97,7 @@
                         <h2 class="panel-title">Bower:</h2>
                     </div>
                     <div class="panel-body">
-                        <p>Just type:</p>
-                        <code>bower install inputable --save</code>
+                        <p>Just type: <code>bower install inputable --save -p</code></p>
                     </div>
                 </div>
             </div>

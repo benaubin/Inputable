@@ -65,7 +65,8 @@ var InputableInputs = {
             new RegExp(/([12]?\d):([0-5]\d) ?([AP]M)?/i),
             function(match){
                 hour = parseInt(match[1])
-                if(match[3] && match[3].toUpperCase() === 'PM')
+                afternoon = moment().hour() > 11
+                if(match[3] && match[3].toUpperCase() === 'PM' || !match[3] && afternoon)
                     hour += 12
                 return {
                     object: {
@@ -93,6 +94,31 @@ var InputableInputs = {
                     object: {
                         hour: hour
                     },
+                    match: {
+                        matches: match,
+                        fullMatch: match[0],
+                        readable: match.join(', ')
+                    }
+                }
+            }
+        ),
+        dayName: new InputableInput(
+            'Name of a Day (fri, Monday, etc)',
+            'date',
+            true,
+            new RegExp(/(sun|mon|tue|wed|thu|fri|sat)(?:[urnes]*?day)?\b/i),
+            function(match){
+                var dates = ['sun','mon','tue','wed','thu','fri','sat']
+                var day = dates.indexOf(match[0])
+                if(day < moment().day())
+                    day += 7
+                var date = moment().day(day)
+                return {
+                    object: {
+                        month: date.month(),
+                        day: date.date(),
+                        year: date.year()
+                    }, 
                     match: {
                         matches: match,
                         fullMatch: match[0],
@@ -131,7 +157,7 @@ var InputableProccesors = {
 }
 
 var Inputable = {
-    inputs: [InputableInputs.dates.calenderNotation,InputableInputs.dates.hourTime,InputableInputs.dates.time],
+    inputs: [InputableInputs.dates.calenderNotation,InputableInputs.dates.hourTime,InputableInputs.dates.time,,InputableInputs.dates.dayName],
     processors: [InputableProccesors.date],
     in: function(input){
         var output = []
