@@ -170,17 +170,19 @@ var InputableProccesors = {
 var Inputable = {
     inputs: [
         InputableInputs.lists,
-        InputableInputs.dates.calenderNotation,InputableInputs.dates.hourTime,InputableInputs.dates.time,,InputableInputs.dates.dayName],
+        InputableInputs.dates.calenderNotation,InputableInputs.dates.hourTime,InputableInputs.dates.time,InputableInputs.dates.dayName],
     processors: [InputableProccesors.date],
     in: function(input){
         var output = []
         var unprocessedOutput = {}
         Inputable.inputs.forEach(function(Input, i){
             var match;
+            var i = 0;
             while (match = Input.regex.exec(input)) {
                 var result = Input.input(match)
                 result.name = Input.name
-
+                result.i = i
+                
                 var type = Input.type
 
                 if(Input.unprocessed){
@@ -190,6 +192,7 @@ var Inputable = {
                 } else {
                     output.push(result)
                 }
+                i++;
             }
         })
         Inputable.processors.forEach(function(processor, i){
@@ -197,6 +200,7 @@ var Inputable = {
             if(input){
                 var result = processor.input(input)
                 result.name = processor.name
+                result.input = input
                 output.push(result)
             }
         })
