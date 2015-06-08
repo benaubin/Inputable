@@ -42,7 +42,7 @@ var InputableInputs = {
         'List',
         'list',
         false,
-        new RegExp(/.+?,? (or|and) .+?\b/),
+        new RegExp(/\S.*?,? (or|and) .+?\b/ig),
         function(match){
             return {
                 object: match[0].replace(new RegExp(',? ' + match[1] + ' '), ', ').split(', '),
@@ -57,7 +57,7 @@ var InputableInputs = {
             'American Calender Date',
             'date',
             true,
-            new RegExp(/(1?\d)([\/.-])(\d{1,2})\2?(\d{2,4})?/i),
+            new RegExp(/(1?\d)([\/.-])(\d{1,2})\2?(\d{2,4})?/ig),
             function(match){
                 return {
                     object: {
@@ -97,7 +97,7 @@ var InputableInputs = {
             'HH [PA]M Time of Day',
             'date',
             true,
-            new RegExp(/([12]?\d) ?([AP]M)/i),
+            new RegExp(/([12]?\d) ?([AP]M)/ig),
             function(match){
                 hour = parseInt(match[1])
                 if(match[2].toUpperCase() === 'PM')
@@ -117,7 +117,7 @@ var InputableInputs = {
             'Name of a Day (fri, Monday, etc)',
             'date',
             true,
-            new RegExp(/(sun|mon|tue|wed|thu|fri|sat)(?:[urnes]*?day)?\b/i),
+            new RegExp(/(sun|mon|tue|wed|thu|fri|sat)(?:[urnes]*?day)?\b/ig),
             function(match){
                 var dates = ['sun','mon','tue','wed','thu','fri','sat']
                 var day = dates.indexOf(match[0])
@@ -176,9 +176,9 @@ var Inputable = {
         var output = []
         var unprocessedOutput = {}
         Inputable.inputs.forEach(function(Input, i){
-            var matches = input.match(Input.regex)
-            if(matches){
-                var result = Input.input(matches)
+            var match;
+            while (match = Input.regex.exec(input)) {
+                var result = Input.input(match)
                 result.name = Input.name
 
                 var type = Input.type
@@ -190,7 +190,6 @@ var Inputable = {
                 } else {
                     output.push(result)
                 }
-
             }
         })
         Inputable.processors.forEach(function(processor, i){
