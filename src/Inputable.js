@@ -38,6 +38,20 @@ var InputableProccesor = function(name,type,input){
 }
 
 var InputableInputs = {
+    lists: new InputableInput(
+        'List',
+        'list',
+        false,
+        new RegExp(/.+?,? (or|and) .+?\b/),
+        function(match){
+            return {
+                object: match[0].replace(new RegExp(',? ' + match[1] + ' '), ', ').split(', '),
+                match: {
+                    matches: match
+                }
+            }
+        }
+    ),
     dates: {
         calenderNotation: new InputableInput(
             'American Calender Date',
@@ -52,8 +66,7 @@ var InputableInputs = {
                         year: parseInt((match[4])? ((match[4].length > 2)? match[4] : '20' + match[4]): moment().year())
                     },
                     match: {
-                        matches: match,
-                        fullMatch: match[0]
+                        matches: match
                     }
                 }
             }
@@ -75,7 +88,6 @@ var InputableInputs = {
                     },
                     match: {
                         matches: match,
-                        fullMatch: match[0],
                         readable: match.join(', ')
                     }
                 }
@@ -96,7 +108,6 @@ var InputableInputs = {
                     },
                     match: {
                         matches: match,
-                        fullMatch: match[0],
                         readable: match.join(', ')
                     }
                 }
@@ -157,7 +168,9 @@ var InputableProccesors = {
 }
 
 var Inputable = {
-    inputs: [InputableInputs.dates.calenderNotation,InputableInputs.dates.hourTime,InputableInputs.dates.time,,InputableInputs.dates.dayName],
+    inputs: [
+        InputableInputs.lists,
+        InputableInputs.dates.calenderNotation,InputableInputs.dates.hourTime,InputableInputs.dates.time,,InputableInputs.dates.dayName],
     processors: [InputableProccesors.date],
     in: function(input){
         var output = []
