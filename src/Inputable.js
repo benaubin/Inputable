@@ -75,20 +75,35 @@ var InputableInputs = {
             'HH:MM Time of 12H Day',
             'date',
             true,
-            new RegExp(/([12]?\d):([0-5]\d) ?([AP]M)?/i),
+            new RegExp(/([12]?\d)(:([0-5]\d))? ?([AP]M)?/ig),
             function(match){
-                hour = parseInt(match[1])
-                afternoon = moment().hour() > 11
-                if(match[3] && match[3].toUpperCase() === 'PM' || !match[3] && afternoon)
-                    hour += 12
-                return {
-                    object: {
-                        hour: hour,
-                        minute: parseInt(match[2])
-                    },
-                    match: {
-                        matches: match,
-                        readable: match.join(', ')
+                if(match[2]){
+                    hour = parseInt(match[1])
+                    afternoon = moment().hour() > 11
+                    if(match[4] && match[4].toUpperCase() === 'PM' || !match[4] && afternoon)
+                        hour += 12
+                    return {
+                        object: {
+                            hour: hour,
+                            minute: parseInt(match[3])
+                        },
+                        match: {
+                            matches: match,
+                            readable: match.join(', ')
+                        }
+                    }
+                } else if(match[4]) {
+                    hour = parseInt(match[1])
+                    if(match[4].toUpperCase() === 'PM')
+                        hour += 12
+                    return {
+                        object: {
+                            hour: hour
+                        },
+                        match: {
+                            matches: match,
+                            readable: match.join(', ')
+                        }
                     }
                 }
             }
@@ -99,30 +114,24 @@ var InputableInputs = {
             true,
             new RegExp(/([12]?\d) ?([AP]M)/ig),
             function(match){
-                hour = parseInt(match[1])
-                if(match[2].toUpperCase() === 'PM')
-                    hour += 12
-                return {
-                    object: {
-                        hour: hour
-                    },
-                    match: {
-                        matches: match,
-                        readable: match.join(', ')
-                    }
-                }
+                
             }
         ),
         dayName: new InputableInput(
             'Name of a Day (fri, Monday, etc)',
             'date',
             true,
-            new RegExp(/(sun|mon|tue|wed|thu|fri|sat)(?:[urnes]*?day)?\b/ig),
+            new RegExp(/(last |next )?(sun|mon|tue|wed|thu|fri|sat)(?:[urnes]*?day)?\b/ig),
             function(match){
                 var dates = ['sun','mon','tue','wed','thu','fri','sat']
-                var day = dates.indexOf(match[0])
+                var day = dates.indexOf(match[2])
                 if(day < moment().day())
                     day += 7
+                if(match[1] === 'last '){
+                    day -= 7
+                } else if(match[1] === 'next '){
+                    day += 7
+                }
                 var date = moment().day(day)
                 return {
                     object: {
@@ -132,7 +141,7 @@ var InputableInputs = {
                     }, 
                     match: {
                         matches: match,
-                        fullMatch: match[0],
+                        fullMatch: match[2],
                         readable: match.join(', ')
                     }
                 }
@@ -180,30 +189,46 @@ var Inputable = {
             var i = 0;
             while (match = Input.regex.exec(input)) {
                 var result = Input.input(match)
-                result.name = Input.name
-                result.i = i
-                
-                var type = Input.type
+                if(result){
+                    result.name = Input.name
+                    result.i = i
 
-                if(Input.unprocessed){
-                    if(!unprocessedOutput[type])
-                        unprocessedOutput[type] = []
-                    unprocessedOutput[type].push(result)
-                } else {
-                    output.push(result)
+                    var type = Input.type
+
+                    if(Input.unprocessed){
+                        if(!unprocessedOutput[type])
+                            unprocessedOutput[type] = []
+                        unprocessedOutput[type].push(result)
+                    } else {
+                        output.push(result)
+                    }
+                    i++;
                 }
-                i++;
+                
             }
         })
         Inputable.processors.forEach(function(processor, i){
-            input = unprocessedOutput[processor.type]
-            if(input){
-                var result = processor.input(input)
-                result.name = processor.name
-                result.input = input
-                output.push(result)
+                var input = unprocessedOutput[processor.type]
+                var this_input = []
+                if(input){
+                    var i = 0
+                    while(this_input.length > 0 || i === 0){
+                        this_input = []
+                        input.forEach(function(inp){
+                            if(inp.i === i)
+                                this_input.push(inp)
+                        })
+                        if(this_input.length > 0){
+                            var result = processor.input(this_input)
+                            result.name = processor.name
+                            result.input = this_input
+                            output.push(result)
+                        }
+                        i++;
+                    }
+                }
             }
-        })
+        )
         
         return (output.empty)? null : output
     }
