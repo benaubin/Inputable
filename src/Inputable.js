@@ -108,15 +108,6 @@ var InputableInputs = {
                 }
             }
         ),
-        hourTime: new InputableInput(
-            'HH [PA]M Time of Day',
-            'date',
-            true,
-            new RegExp(/([12]?\d) ?([AP]M)/ig),
-            function(match){
-                
-            }
-        ),
         dayName: new InputableInput(
             'Name of a Day (fri, Monday, etc)',
             'date',
@@ -124,7 +115,7 @@ var InputableInputs = {
             new RegExp(/(last |next )?(sun|mon|tue|wed|thu|fri|sat)(?:[urnes]*?day)?\b/ig),
             function(match){
                 var dates = ['sun','mon','tue','wed','thu','fri','sat']
-                var day = dates.indexOf(match[2])
+                var day = dates.indexOf(match[2].toLowerCase())
                 if(day < moment().day())
                     day += 7
                 if(match[1] === 'last '){
@@ -142,6 +133,27 @@ var InputableInputs = {
                     match: {
                         matches: match,
                         fullMatch: match[2],
+                        readable: match.join(', ')
+                    }
+                }
+            }
+        ),
+        writenMonth: new InputableInput(
+            'American Written Month + Optional Date & Year',
+            'date',
+            true,
+            new RegExp(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s*([0-3]?[0-9])?(?:st|nd|th)?(?:[,\s]+(\d+))?/ig),
+            function(match){
+                var month = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'].indexOf(match[1].toLowerCase()),
+                    year  = parseInt(match[3]) || moment().year()
+                return {
+                    object: {
+                        month: month,
+                        day: parseInt(match[2]) || 0,
+                        year: year
+                    }, 
+                    match: {
+                        matches: match,
                         readable: match.join(', ')
                     }
                 }
@@ -179,7 +191,8 @@ var InputableProccesors = {
 var Inputable = {
     inputs: [
         InputableInputs.lists,
-        InputableInputs.dates.calenderNotation,InputableInputs.dates.hourTime,InputableInputs.dates.time,InputableInputs.dates.dayName],
+        InputableInputs.dates.calenderNotation,InputableInputs.dates.time,
+        InputableInputs.dates.dayName, InputableInputs.dates.writenMonth],
     processors: [InputableProccesors.date],
     in: function(input){
         var output = []
